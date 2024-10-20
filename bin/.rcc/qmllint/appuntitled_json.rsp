@@ -1,0 +1,13 @@
+--bare
+-I
+C:/Users/nigilist/source/Qt/untitled/bin
+-I
+C:/Qt/6.8.0/mingw_64/qml
+--resource
+C:/Users/nigilist/source/Qt/untitled/bin/.qt/rcc/qmake_untitled.qrc
+--resource
+C:/Users/nigilist/source/Qt/untitled/bin/.qt/rcc/appuntitled_raw_qml_0.qrc
+C:/Users/nigilist/source/Qt/untitled/Main.qml
+C:/Users/nigilist/source/Qt/untitled/calculator.js
+--json
+C:/Users/nigilist/source/Qt/untitled/bin/appuntitled_qmllint.json

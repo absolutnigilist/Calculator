@@ -1,0 +1,14 @@
+-rootPath
+C:/Users/nigilist/source/Qt/untitled
+-cmake-output
+-output-file
+C:/Users/nigilist/source/Qt/untitled/bin/.qt/qml_imports/appuntitled_build.cmake
+-importPath
+C:/Users/nigilist/source/Qt/untitled/bin/untitled
+-importPath
+C:/Users/nigilist/source/Qt/untitled/bin
+-importPath
+C:/Qt/6.8.0/mingw_64/qml
+-qrcFiles
+C:/Users/nigilist/source/Qt/untitled/bin/.qt/rcc/qmake_untitled.qrc
+C:/Users/nigilist/source/Qt/untitled/bin/.qt/rcc/appuntitled_raw_qml_0.qrc

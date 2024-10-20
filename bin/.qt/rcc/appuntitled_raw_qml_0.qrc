@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/qt/qml/untitled/">
+    <file alias="Main.qml">C:/Users/nigilist/source/Qt/untitled/Main.qml</file>
+    <file alias="calculator.js">C:/Users/nigilist/source/Qt/untitled/calculator.js</file>
+    <file alias="resources.qrc">C:/Users/nigilist/source/Qt/untitled/resources.qrc</file>
+  </qresource>
+</RCC>
+

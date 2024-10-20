@@ -1,0 +1,27 @@
+{
+	"BUILD_DIR" : "C:/Users/nigilist/source/Qt/untitled/bin/appuntitled_autogen",
+	"CMAKE_BINARY_DIR" : "C:/Users/nigilist/source/Qt/untitled/bin",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/nigilist/source/Qt/untitled/bin",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Users/nigilist/source/Qt/untitled",
+	"CMAKE_SOURCE_DIR" : "C:/Users/nigilist/source/Qt/untitled",
+	"CROSS_CONFIG" : false,
+	"GENERATOR" : "Ninja",
+	"INCLUDE_DIR" : "C:/Users/nigilist/source/Qt/untitled/bin/appuntitled_autogen/include",
+	"INPUTS" : 
+	[
+		"C:/Users/nigilist/source/Qt/untitled/Main.qml",
+		"C:/Users/nigilist/source/Qt/untitled/calculator.js",
+		"C:/Users/nigilist/source/Qt/untitled/OpenSansSemibold.ttf"
+	],
+	"LOCK_FILE" : "C:/Users/nigilist/source/Qt/untitled/bin/CMakeFiles/appuntitled_autogen.dir/AutoRcc_resources_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "--no-zstd", "-name", "resources" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_resources.cpp",
+	"RCC_EXECUTABLE" : "C:/Qt/6.8.0/mingw_64/bin/rcc.exe",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "C:/Users/nigilist/source/Qt/untitled/bin/CMakeFiles/appuntitled_autogen.dir/AutoRcc_resources_EWIEGA46WW_Used.txt",
+	"SOURCE" : "C:/Users/nigilist/source/Qt/untitled/resources.qrc",
+	"USE_BETTER_GRAPH" : true,
+	"VERBOSITY" : 0
+}
