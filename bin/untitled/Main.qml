@@ -19,10 +19,7 @@ Window {
             id: openSansSemibold
             source: "qrc:/fonts/OpenSansSemibold.ttf" // Указываем путь к шрифту
         }
-    property string display: ""
-    property double firstNumber: 0
-    property double secondNumber: 0
-    property string operator: ""
+
 
     // Импортируем JavaScript-файл
     QtObject {
@@ -39,12 +36,70 @@ Window {
     {
         console.log(mathInst.testFunc());
     }
+
+    property string display: ""
+    property double firstNumber: 0
+    property double secondNumber: 0
+    property string operator: ""
+
+    property string secretCode: ""
+    property bool secretMenuOpened: false
+
+    // Таймер для отслеживания долгого нажатия
+    Timer {
+        id: timer
+        interval: 4000
+        running: false
+        repeat: false
+
+        onTriggered:
+        {
+            main.secretCode = ""; // Сбрасываем комбинацию
+        }
+    }
+    // Таймер для отслеживания ввода кода
+    Timer {
+        id: codeTimer
+        interval: 5000
+        running: false
+        repeat: false
+
+        onTriggered:
+        {
+            main.secretCode = ""; // Сбрасываем код после 5 секунд
+        }
+    }
+    // Экран секретного меню
+        Rectangle {
+            id: secretMenu
+            width: parent.width
+            height: parent.height
+            visible: main.secretMenuOpened
+            color: "#024873"
+
+            Text {
+                text: "Секретное меню"
+                font.pixelSize: 32
+                color: "white"
+                anchors.centerIn: parent
+            }
+
+            Button {
+                text: "Назад"
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: {
+                    main.secretMenuOpened = false
+                }
+            }
+        }
     // Основное окно калькулятора
     Rectangle {
         id:mainRect
         width: parent.width
         height: parent.height
         color: "#024873" // Фоновый цвет
+        visible: !main.secretMenuOpened
 
         // Экран для вывода
         Rectangle {
@@ -118,7 +173,7 @@ Window {
             anchors.bottomMargin: 24
 
             property var buttons: [
-                "()", "±", "%", "÷",
+                "()", "+/-", "%", "÷",
                 "7", "8", "9", "×",
                 "4", "5", "6", "-",
                 "1", "2", "3", "+",
@@ -141,19 +196,26 @@ Window {
                         anchors.centerIn: parent
                         width:60
                         height:60
-                        text: baseBtnRect.modelData
-                        font.family:openSansSemibold.name
-                        font.pixelSize: 24
                         background: Rectangle {
                             id: bb
                             // Цвета кнопок
                             color: (baseBtnRect.modelData == "C") ? "#F25E5E" :
                                                                     (baseBtnRect.modelData == "=" || baseBtnRect.modelData == "÷" || baseBtnRect.modelData == "×" || baseBtnRect.modelData == "-" || baseBtnRect.modelData == "+" ||
-                                                                     baseBtnRect.modelData == "()" || baseBtnRect.modelData == "±" || baseBtnRect.modelData == "%") ? "#0889A6" :"#B0D1D8" // Цвет цифр
-
-                            border.color: "#546e7a"
-                            border.width: 2
+                                                                     baseBtnRect.modelData == "()" || baseBtnRect.modelData == "+/-" || baseBtnRect.modelData == "%") ? "#0889A6" :"#B0D1D8" // Цвет цифр
                             radius: parent.width / 2// Делаем кнопки круглыми
+                        }
+
+                        contentItem: Text
+                        {
+                            text: baseBtnRect.modelData
+                            font.family:openSansSemibold.name
+                            font.pixelSize: 24
+                            color: (baseBtnRect.modelData == "=" || baseBtnRect.modelData == "÷" || baseBtnRect.modelData == "×" ||
+                                    baseBtnRect.modelData == "-" || baseBtnRect.modelData == "+" || baseBtnRect.modelData == "()" ||
+                                    baseBtnRect.modelData == "+/-" || baseBtnRect.modelData == "%") ? "#FFFFFF" : "#024873" // Цвет текста
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            anchors.fill: parent // Заполняем родителя и центрируем текст
                         }
 
                         //Обработка состояний кнопки (наведение, нажатие)
@@ -162,47 +224,72 @@ Window {
                             acceptedButtons: Qt.LeftButton
                             anchors.fill: parent
                             onPressed: {
+                                if(baseBtnRect.modelData==="=")
+                                {
+                                timer.start();
+                                }
                                 // Меняем цвет при нажатии
                                 bb.color = (baseBtnRect.modelData == "C") ? "#F47E7E" :
                                                                             (baseBtnRect.modelData == "=" || baseBtnRect.modelData == "÷" || baseBtnRect.modelData == "×" || baseBtnRect.modelData == "-" || baseBtnRect.modelData == "+" ||
-                                                                             baseBtnRect.modelData == "()" || baseBtnRect.modelData == "±" || baseBtnRect.modelData == "%") ? "#F7E425" :
-                                                                                                                                                                              "#04BFAD"
-
+                                                                             baseBtnRect.modelData == "()" || baseBtnRect.modelData == "+/-" || baseBtnRect.modelData == "%") ? "#F7E425" : "#04BFAD"
+                            // Обработка ввода цифр
+                                if (baseBtnRect.modelData.match(/^\d$/))
+                                {
+                                    main.secretCode+=baseBtnRect.modelData;// Добавляем цифру к коду
+                                    if(main.secretCode.length>3)
+                                    {
+                                        main.secretCode = ""; // Сбрасываем код если слишком длинный
+                                    }
+                                    else if(main.secretCode==="123")
+                                    {
+                                    main.secretMenuOpened=true; // Открываем секретное меню, если введен правильный код
+                                    main.secretCode = ""; // Сбрасываем код после открытия меню
+                                    }
+                                }
                             }
                             onReleased: {
-                                // Возвращаем исходный цвет
+                            // Останавливаем таймер при отпускании кнопки "="
+                            timer.stop();
 
-                                bb.color = (baseBtnRect.modelData == "C") ? "#F25E5E" :
+                            // Возвращаем исходный цвет
+                            bb.color = (baseBtnRect.modelData == "C") ? "#F25E5E" :
                                                                             (baseBtnRect.modelData == "=" || baseBtnRect.modelData == "÷" || baseBtnRect.modelData == "×" || baseBtnRect.modelData == "-" || baseBtnRect.modelData == "+" ||
-                                                                             baseBtnRect.modelData == "()" || baseBtnRect.modelData == "±" || baseBtnRect.modelData == "%") ? "#0889A6" :
+                                                                             baseBtnRect.modelData == "()" || baseBtnRect.modelData == "+/-" || baseBtnRect.modelData == "%") ? "#0889A6" :
                                                                                                                                                                               "#B0D1D8"
                             }
                             onEntered: {
                                 // Изменяем цвет при наведении
                                 bb.color = (baseBtnRect.modelData == "C") ? "#F47E7E" :
                                                                             (baseBtnRect.modelData == "=" || baseBtnRect.modelData == "÷" || baseBtnRect.modelData == "×" || baseBtnRect.modelData == "-" || baseBtnRect.modelData == "+" ||
-                                                                             baseBtnRect.modelData == "()" || baseBtnRect.modelData == "±" || baseBtnRect.modelData == "%") ? "#F7E425" :
+                                                                             baseBtnRect.modelData == "()" || baseBtnRect.modelData == "+/-" || baseBtnRect.modelData == "%") ? "#F7E425" :
                                                                                                                                                                               "#04BFAD"
                             }
                             onExited: {
                                 // Возвращаем исходный цвет при уходе курсора
                                 bb.color = (baseBtnRect.modelData == "C") ? "#F25E5E" :
                                                                             (baseBtnRect.modelData == "=" || baseBtnRect.modelData == "÷" || baseBtnRect.modelData == "×" || baseBtnRect.modelData == "-" || baseBtnRect.modelData == "+" ||
-                                                                             baseBtnRect.modelData == "()" || baseBtnRect.modelData == "±" || baseBtnRect.modelData == "%") ? "#0889A6" :
+                                                                             baseBtnRect.modelData == "()" || baseBtnRect.modelData == "+/-" || baseBtnRect.modelData == "%") ? "#0889A6" :
                                                                                                                                                                               "#B0D1D8"
                             }
-
+                            onCanceled: {
+                            timer.stop(); // Остановить таймер, если нажатие прервано
+                            // Возвращаем исходный цвет
+                            bb.color = (baseBtnRect.modelData == "C") ? "#F25E5E" :
+                                        (baseBtnRect.modelData == "=" || baseBtnRect.modelData == "÷" || baseBtnRect.modelData == "×" || baseBtnRect.modelData == "-" || baseBtnRect.modelData == "+" ||
+                                         baseBtnRect.modelData == "()" || baseBtnRect.modelData == "+/-" || baseBtnRect.modelData == "%") ? "#0889A6" :
+                                        "#B0D1D8";
+                                }
                             onClicked: {
                                 // Обработка нажатий на кнопки
                                 if (baseBtnRect.modelData === "=") {
                                     // Выполнение вычисления
-                                    if (operator !== "" && secondNumber !== 0) { // Проверяем, есть ли оператор и второе число
-                                        var result = Calculator.calculate(firstNumber, secondNumber, operator);
+                                    if (main.operator !== "" && main.secondNumber !== 0) { // Проверяем, есть ли оператор и второе число
+                                        var result = Calculator.calculate(main.firstNumber, main.secondNumber, main.operator);
                                         resultDisplay.text = result !== null ? result.toString() : "Error";
                                         // Сбрасываем значения для следующего вычисления
-                                        firstNumber = result; // Устанавливаем первый номер в результат для цепочки операций
-                                        secondNumber = 0;
-                                        operator = "";
+                                        main.firstNumber = result; // Устанавливаем первый номер в результат для цепочки операций
+                                        main.secondNumber = 0;
+                                        main.operator = "";
                                         firstDisplay.text = ""; // Сбрасываем дисплей
                                     } else {
                                         resultDisplay.text = "Error"; // Если что-то не так, выводим ошибку
@@ -210,9 +297,9 @@ Window {
                                 } else if (baseBtnRect.modelData === "C") {
                                     // Очистка экрана
                                     firstDisplay.text = "";
-                                    firstNumber = 0;
-                                    secondNumber = 0;
-                                    operator = "";
+                                    main.firstNumber = 0;
+                                    main.secondNumber = 0;
+                                    main.operator = "";
                                     resultDisplay.text = "0";
                                 } else {
                                     // Проверка, если это цифра
@@ -220,7 +307,7 @@ Window {
                                         if (operator === "") {
                                             // Если оператор еще не выбран, добавляем цифру к первому числу
                                             firstDisplay.text += baseBtnRect.modelData;
-                                            firstNumber = parseFloat(firstDisplay.text);
+                                            main.firstNumber = parseFloat(firstDisplay.text);
                                         } else {
                                             // Если оператор уже выбран, добавляем цифру ко второму числу
                                             if (firstDisplay.text.includes(" ")) {
@@ -238,7 +325,7 @@ Window {
                                             // Парсим второе число из текста
                                             var parts = firstDisplay.text.split(" ");
                                             if (parts.length === 3) { // Ожидаем формата "число оператор число"
-                                                secondNumber = parseFloat(parts[2]);
+                                                main.secondNumber = parseFloat(parts[2]);
                                             }
                                         }
                                     } else if (["+", "-", "×", "÷"].includes(baseBtnRect.modelData)) {
@@ -246,7 +333,7 @@ Window {
                                         if (firstNumber !== 0) {
                                             operator = baseBtnRect.modelData; // Устанавливаем оператор
                                             firstDisplay.text += " " + operator + " "; // Отображение оператора на экране
-                                            secondNumber = 0; // Сбрасываем второе число, чтобы готовиться к вводу
+                                            main.secondNumber = 0; // Сбрасываем второе число, чтобы готовиться к вводу
                                         }
                                     }
                                 }
